@@ -5,6 +5,12 @@ PIJ (short for "PNG inside JPEG") is a codec that enables embedding lossless reg
 
 ## Building the Project
 
+### Prerequisites
+- Cmake: install -> `sudo apt install cmake`
+- g++: install -> `sudo apt install g++`
+- libopencv-dev: install -> `sudo apt install libopencv-dev`
+- nlohmann/json: install -> `sudo apt install nlohmann-json3-dev`
+
 ### Steps to Build the Project
 1. Create a build directory:
    ```bash
@@ -13,10 +19,12 @@ PIJ (short for "PNG inside JPEG") is a codec that enables embedding lossless reg
    ```
 2. Run CMake to configure the project:
    ```bash
-   cmake -DCMAKE_TOOLCHAIN_FILE=C:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -A x64 ..
+   cmake ..
    ```
 3. Build the project using CMake:
    ```bash
-    cmake --build . --config Release
+    make
     ```
+
+mkdir build && cd build && cmake .. && make
     
