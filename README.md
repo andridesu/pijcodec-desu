@@ -10,6 +10,7 @@ PIJ (short for "PNG inside JPEG") is a codec that enables embedding lossless reg
 - g++: install -> `sudo apt install g++`
 - libopencv-dev: install -> `sudo apt install libopencv-dev`
 - nlohmann/json: install -> `sudo apt install nlohmann-json3-dev`
+- pybind11: install -> `sudo apt install python3-pybind11`
 
 ### Steps to Build the Project
 1. Create a build directory:

@@ -1,3 +1,7 @@
 [build-system]
 requires = ["setuptools>=42", "pybind11>=2.13.0"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "pypij"
+version = "0.1.0"
