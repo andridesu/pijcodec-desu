@@ -3,7 +3,7 @@ import pypij
 import cv2
 
 # Read input image
-input_image = cv2.imread("input.jpeg")
+input_image = cv2.imread("input.jpg")
 if input_image is None:
     raise FileNotFoundError("Could not read the input image file")
 

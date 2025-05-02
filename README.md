@@ -27,4 +27,5 @@ PIJ (short for "PNG inside JPEG") is a codec that enables embedding lossless reg
     ```
 
 mkdir build && cd build && cmake .. && make
-    
+
+pip install pybind11

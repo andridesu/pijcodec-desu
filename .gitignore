@@ -47,3 +47,15 @@ vcpkg_installed/
 *.suo
 *.directory
 /pijcodec/__pycache__
+
+# Image files
+*.png
+*.jpg
+*.pij
+
+# Python package build artifacts
+*.egg-info/
+*.egg
+*.pyc
+dist/
+build/
