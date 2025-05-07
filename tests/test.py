@@ -1,35 +1,43 @@
 import numpy as np
 import pypij
 import cv2
+import matplotlib.pyplot as plt
 
-# Read input image
-input_image = cv2.imread("input.jpg")
-if input_image is None:
-    raise FileNotFoundError("Could not read the input image file")
+def encode_image(input_path, output_path, lossless_boxes, jpeg_quality=90, zlib_level=6):
+    # Read input image
+    img_bgr = cv2.imread(input_path)
+    if img_bgr is None:
+        raise FileNotFoundError(f"Could not read the input image file: {input_path}")
+    
+    encoded_data = pypij.encode(img_bgr, lossless_boxes, pad=5, 
+                              jpeg_quality=jpeg_quality, zlib_level=zlib_level)
 
-# Ensure image is in BGR format (OpenCV default)
-input_image = cv2.cvtColor(input_image, cv2.COLOR_BGR2RGB)
+    # Save encoded data to a file
+    with open(output_path, "wb") as f:
+        print(f"Encoded data saved to {output_path}")
+        f.write(encoded_data)
 
-# Define lossless boxes
-lossless_boxes = [[10, 10, 250, 250]]
+def decode_image(input_path, show_preview=True):
+    if not input_path.endswith(".pij"):
+        raise ValueError("Input file must be a .pij file")
 
-# Encode the image
-encoded_data = pypij.encode(input_image, lossless_boxes, pad=5, jpeg_quality=90, zlib_level=6)
+    with open(input_path, "rb") as f:
+        data = f.read()
 
-# Save encoded data to a file
-with open("output.pij", "wb") as f:
-    print("Encoded data saved to output.pij")
-    f.write(encoded_data)
+    # pypij.decode returns a BGR‐ordered array
+    img_bgr = pypij.decode(data)
+    cv2.imwrite("debug_decode.png", img_bgr)
+    
+    img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+    plt.figure(figsize=(12, 8))
+    plt.imshow(img_rgb)
+    plt.axis("off")
+    plt.show()
 
-# Read encoded data from file
-with open("output.pij", "rb") as f:
-    loaded_data = f.read()
+    return img_bgr
 
-# Decode the image from loaded data
-decoded_image = pypij.decode(loaded_data)
-
-# Convert back to BGR for saving
-decoded_image = cv2.cvtColor(decoded_image, cv2.COLOR_RGB2BGR)
-
-# Save the decoded image
-cv2.imwrite("decoded_image.png", decoded_image)
+if __name__ == "__main__":
+    # Example usage
+    lossless_boxes = [[577, 147, 770, 387]]
+    # encode_image("input-csp.jpg", "output.pij", lossless_boxes)
+    decoded_img = decode_image("output.pij")

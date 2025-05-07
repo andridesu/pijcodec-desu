@@ -1,17 +1,30 @@
 cmake_minimum_required(VERSION 3.4...3.18)
 project(pybindtest)
 
-# add pybind11 (either as submodule or installed via find_package)
-add_subdirectory(pybind11)                    # if you have the subfolder
-# or: find_package(pybind11 REQUIRED)
+find_package(pybind11 REQUIRED)
+find_package(OpenCV   REQUIRED)
+find_package(ZLIB     REQUIRED)
 
-find_package(OpenCV REQUIRED)                 # locate OpenCV
-find_package(ZLIB REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS})   # add include paths
-include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(
+    ${OpenCV_INCLUDE_DIRS}
+    ${ZLIB_INCLUDE_DIRS}
+    ${CMAKE_SOURCE_DIR}/include
+)
 
-pybind11_add_module(pypij src/main.cpp)           # build the extension
-target_link_libraries(pypij PRIVATE ${OpenCV_LIBS})  # link OpenCV libs
-target_sources(pypij PRIVATE
+# your Python extension
+pybind11_add_module(pypij
+    src/main.cpp
     src/PIJCodec.cpp
+)
+target_link_libraries(pypij PRIVATE ${OpenCV_LIBS} ${ZLIB_LIBRARIES})
+
+# new: standalone viewer
+add_executable(pij_viewer
+    src/pij_viewer.cpp
+    src/PIJCodec.cpp      # reuse the same decode implementation
+)
+target_link_libraries(pij_viewer
+    PRIVATE
+      ${OpenCV_LIBS}
+      ${ZLIB_LIBRARIES}
 )
