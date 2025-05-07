@@ -51,7 +51,7 @@ void PIJCodec::encode(
     for(auto &b: losslessBoxes)
         cv::rectangle(bg,cv::Rect(b[0],b[1],b[2]-b[0],b[3]-b[1]),cv::Scalar(0),cv::FILLED);
     auto jpegData=encodeJPEG(bg,jpegQuality);
-    json md={ {"v",1}, {"pad",pad}, {"b",boxes} };
+    json md={ {"v",1}, {"b",boxes} };
     auto s=md.dump();
     std::vector<uint8_t> cmp(s.size()*2);
     uLongf l=cmp.size(); compress2(cmp.data(),&l,(Bytef*)s.data(),s.size(),zlibLevel);
@@ -88,17 +88,16 @@ std::tuple<cv::Mat, std::vector<std::vector<int>>> PIJCodec::decode(std::istream
     cv::Mat img = decodeImage(j);
     std::vector<std::vector<int>> boxes;
     
-    int pad = md.value("pad", 5);
     for(size_t i=0; i<reg.size(); i++) {
         auto &b = md["b"][i];
         auto p = decodeImage(reg[i]);
         p.copyTo(img(cv::Rect(b[0],b[1],p.cols,p.rows)));
         
         std::vector<int> box = {
-            b[0].get<int>() + pad,  // add pad to get original x1
-            b[1].get<int>() + pad,  // add pad to get original y1
-            b[0].get<int>() + p.cols - pad,  // subtract pad to get original x2
-            b[1].get<int>() + p.rows - pad   // subtract pad to get original y2
+            b[0].get<int>(),
+            b[1].get<int>(),
+            b[0].get<int>() + p.cols,
+            b[1].get<int>() + p.rows
         };
         boxes.push_back(box);
     }
