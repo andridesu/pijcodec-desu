@@ -67,7 +67,7 @@ void PIJCodec::encode(
     writeBigEndian(out,crc);
 }
 
-std::tuple<cv::Mat, std::vector<std::vector<int>>> PIJCodec::decode(std::istream& in) {
+cv::Mat PIJCodec::decode(std::istream& in) {
     char m[4]; in.read(m,4);
     if(std::string(m,4)!="PIJ\x01") throw std::runtime_error("Bad magic");
     uint32_t jl=readBigEndian(in);
@@ -86,21 +86,12 @@ std::tuple<cv::Mat, std::vector<std::vector<int>>> PIJCodec::decode(std::istream
     
     auto md = json::parse(std::string((char*)um.data(),ul));
     cv::Mat img = decodeImage(j);
-    std::vector<std::vector<int>> boxes;
     
     for(size_t i=0; i<reg.size(); i++) {
         auto &b = md["b"][i];
         auto p = decodeImage(reg[i]);
         p.copyTo(img(cv::Rect(b[0],b[1],p.cols,p.rows)));
-        
-        std::vector<int> box = {
-            b[0].get<int>(),
-            b[1].get<int>(),
-            b[0].get<int>() + p.cols,
-            b[1].get<int>() + p.rows
-        };
-        boxes.push_back(box);
     }
     
-    return std::make_tuple(img, boxes);
+    return img;
 }

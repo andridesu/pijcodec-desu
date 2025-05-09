@@ -17,10 +17,15 @@ int main(int argc, char** argv) {
     }
 
     try {
-        auto [img, boxes] = PIJCodec::decode(in);
+        cv::Mat img = PIJCodec::decode(in);
         if (img.empty()) {
             std::cerr << "Error: decoded image is empty\n";
             return 1;
+        }
+
+        // Convert BGR to RGB if needed
+        if (img.channels() == 3) {  // Only for color images
+            cv::cvtColor(img, img, cv::COLOR_BGR2RGB);
         }
 
         // Show and wait

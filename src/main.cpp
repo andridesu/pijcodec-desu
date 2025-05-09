@@ -55,34 +55,11 @@ py::bytes pij_encode(const cv::Mat& img,
     return py::bytes(os.str());
 }
 
-py::tuple decode_wrapper(py::bytes raw_pij) {
-    // 1) Turn Python bytes into a vector<uint8_t>
-    std::string s = raw_pij; 
-    std::vector<uint8_t> buf(s.begin(), s.end());
-
-    // 2) Decode into a cv::Mat (BGR)
-    std::istringstream in(std::string(reinterpret_cast<char*>(buf.data()), buf.size()));
-    auto [mat, boxes] = PIJCodec::decode(in);
-
-    // 3) Prepare NumPy array metadata
-    ssize_t rows = mat.rows;
-    ssize_t cols = mat.cols;
-    ssize_t ch   = mat.channels();
-    std::vector<ssize_t> shape   = { rows, cols, ch };
-    std::vector<ssize_t> strides = {
-        static_cast<ssize_t>(mat.step[0]),   // bytes per row
-        static_cast<ssize_t>(mat.elemSize()),// bytes per pixel
-        1                                     // bytes per channel
-    };
-
-    // 4) Allocate a new NumPy array (Python owns this memory)
-    py::array_t<uint8_t> result(shape, strides);
-
-    // 5) Copy the data in
-    auto buf_out = result.mutable_data();
-    std::memcpy(buf_out, mat.data, rows * mat.step[0]);
-
-    return py::make_tuple(result, boxes);
+cv::Mat pij_decode(const py::bytes& blob)
+{
+    std::string buf = blob;
+    std::istringstream is(buf, std::ios::binary);
+    return PIJCodec::decode(is);
 }
 
 PYBIND11_MODULE(pypij, m) {
@@ -91,5 +68,5 @@ PYBIND11_MODULE(pypij, m) {
         py::arg("image"), py::arg("lossless_boxes"),
         py::arg("pad") = 5, py::arg("jpeg_quality") = 85,
         py::arg("zlib_level") = 6);
-    m.def("decode", &decode_wrapper, py::arg("raw_pij"));
+        m.def("decode", &pij_decode, py::arg("blob"));
 }

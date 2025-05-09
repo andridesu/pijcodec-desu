@@ -39,5 +39,5 @@ def decode_image(input_path, show_preview=True):
 if __name__ == "__main__":
     # Example usage
     lossless_boxes = [[577, 147, 770, 387]]
-    # encode_image("input-csp.jpg", "output.pij", lossless_boxes)
+    encode_image("input-csp.jpg", "output.pij", lossless_boxes)
     decoded_img = decode_image("output.pij")

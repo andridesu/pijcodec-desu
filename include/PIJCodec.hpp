@@ -17,5 +17,5 @@ public:
     );
 
     // Decode from .pij stream, returning a reconstructed cv::Mat
-    static std::tuple<cv::Mat, std::vector<std::vector<int>>> decode(std::istream& in);
+    static cv::Mat decode(std::istream& in);
 };

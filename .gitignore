@@ -59,3 +59,5 @@ vcpkg_installed/
 *.pyc
 dist/
 build/
+tests/config.yaml
+**/test_iv.key

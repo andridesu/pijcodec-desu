@@ -1,0 +1,13 @@
+face_detection:
+  strategy: "yolov8"
+  params:
+    model_path: "/media/engineering/projects/andridesu/snapsafe-server-desu/csp/tmp/yolov8m_internal_300e.pt"
+
+cryptography:
+  strategy: "aes" # Available methods: aes, blowfish
+  secret:
+    source: "file" # Available methods: config, file, env, vault
+    key_path: "test_key.key"
+    iv_path: "test_iv.key"
+  params:
+    mode: "CBC"
